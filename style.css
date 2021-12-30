@@ -26,6 +26,8 @@ body {
     width: 380px;
     height: 100px;
 
+    overflow: hidden;
+
     background-color: #221E22;
 }
 
