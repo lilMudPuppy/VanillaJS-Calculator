@@ -7,11 +7,19 @@ var operatorBtn = document.getElementsByClassName('operator');
 
 //globals
 
-var numOne = 0;
-var numTwo = 0;
+var numOne = '';
+var numTwo = '';
+var result = 0;
+
+
 var lastOp = '';
+var isOp = false;
+
+
+var opCount = 0;
 
 var tmp = '';
+
 
 
 
@@ -22,7 +30,14 @@ for(let i = 0; i < otherBtn.length; i++) {
     if (otherBtn[i].innerHTML == 'AC') {
         otherBtn[i].onclick = function() {
             historyDisplay.innerHTML = '';
-            display.innerHTML = '';
+            display.innerHTML = '0';
+            numOne = '';
+            numTwo = '';
+            result = '';
+            op = false;
+            opCount = 0;
+
+            tmp = '';
         };
     }
 }
@@ -30,11 +45,12 @@ for(let i = 0; i < otherBtn.length; i++) {
 //numbers logic
 for(let i = 0; i < numberBtn.length; i++ ) {
     numberBtn[i].onclick = function() {
+        var num = numberBtn[i].innerHTML;
 
-        tmp += numberBtn[i].innerHTML;
-        numOne = parseInt(tmp);
+        numOne += num;
+        display.innerHTML = numOne;
 
-        display.innerHTML = tmp;
+        isOp = false;
     }
 }
 
@@ -43,29 +59,55 @@ for(let i = 0; i < operatorBtn.length; i++) {
     operatorBtn[i].onclick = function() {
         var operator = operatorBtn[i].innerHTML;
 
-        switch(operator) {
-            case '/':
-            
-                numTwo = numTwo / numOne;
-                historyDisplay = numTwo + '';
-                lastOp = operator;
-
-
-                break;
-            case 'x':
-                // code block
-                break;
-            case '-':
-                // code block
-                break;
+        switch (operator) {
             case '+':
+                if (lastOp == '=') {
+                    numTwo = display.innerHTML;
+                    numOne = '';
+
+                    lastOp = operator;
+                }else if (lastOp == '+'){
+                    numTwo = calculate(numOne, numTwo, lastOp);
+                    display.innerHTML = numTwo + '';
+                }else {
+                    lastOp = operator;
+                    numTwo = numOne;
+                    numOne = '';
+                }
+                isOp = true;
+                break;
+
+            case '-':
 
                 break;
+            
+
             case '=':
-
+                result = calculate(numOne, numTwo, lastOp);
+                display.innerHTML = result + '';
                 break;
-            default:
-                // code block
-        } 
+        }
+    }
+}
+
+
+function calculate(sNum1, sNum2, operator) {
+    var num1 = parseInt(sNum1);
+    var num2 = parseInt(sNum2);
+    var result = 0;
+
+    switch (operator) {
+        case '/':
+            result = num2 / num1;
+            return result;
+        case 'x':
+            result = num2 * num1;
+            return result;
+        case '-':
+            result = num2 - num1;
+            return result;
+        case '+':
+            result = num2 + num1;
+            return result;
     }
 }

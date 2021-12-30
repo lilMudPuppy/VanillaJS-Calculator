@@ -70,7 +70,7 @@ body {
     height: 470px;
 
     display: grid;
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(4, 87.5px);
     grid-template-rows: repeat(5, auto);
     row-gap: 10px;
     column-gap: 10px;
@@ -113,6 +113,9 @@ body {
     background-color: #eca52c;
 }
 
-.operator:hover {
-    background-color: #f3b13e;
+
+
+
+.pressed-operator {
+    background-color: #ff1100;
 }
