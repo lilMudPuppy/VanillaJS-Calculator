@@ -47,8 +47,15 @@ for(let i = 0; i < numberBtn.length; i++ ) {
     numberBtn[i].onclick = function() {
         var num = numberBtn[i].innerHTML;
 
-        numOne += num;
-        display.innerHTML = numOne;
+        if (isOp) {
+            numTwo = display.innerHTML;
+            numOne = '';
+            numOne += num;
+            display.innerHTML = numOne;
+        }else {
+            numOne += num;
+            display.innerHTML = numOne;
+        }
 
         isOp = false;
     }
@@ -110,4 +117,8 @@ function calculate(sNum1, sNum2, operator) {
             result = num2 + num1;
             return result;
     }
+}
+
+function lastOperator() {
+    
 }
