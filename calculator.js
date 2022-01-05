@@ -58,10 +58,34 @@ class Calculator {
         this.historyOperand = '';
     }
 
-    updateDisplay() {
-        this.currentDisplay.innerText = this.currentOperand;
-        this.historyDisplay.innerText = this.historyOperand;
+    getDisplayNumber(number) {
+        const stringNumber = number.toString();
+        const integerDigits = parseFloat(stringNumber.split('.')[0]);
+        const decimalDigits = stringNumber.split('.')[1];
+        let integerDisplay;
+        if (isNaN(integerDigits)) {
+            integerDisplay = '';
+        }else {
+            integerDisplay = integerDigits.toLocaleString('en', {maximumFractionDigits: 0 });
+        }
+        if (decimalDigits != null) {
+            return `${integerDisplay}.${decimalDigits}`
+        }else {
+            return integerDisplay;
+        }
+        
+    }
 
+    updateDisplay() {
+        this.currentDisplay.innerText = this.getDisplayNumber(this.currentOperand);
+        if (this.operation != null) {
+            this.historyDisplay.innerText = 
+            `${this.getDisplayNumber(this.historyOperand)} ${this.operation}`;
+        }else {
+            this.historyDisplay.innerText = '';
+        }
+        // line bellow not nided any more but just in case
+        // this.historyDisplay.innerText = this.historyOperand;
     }
 }
 
