@@ -1,124 +1,111 @@
-var historyDisplay = document.getElementById('display-history');
-var display = document.getElementById('current');
-
-var otherBtn = document.getElementsByClassName('other');
-var numberBtn = document.getElementsByClassName('number');
-var operatorBtn = document.getElementsByClassName('operator');
-
-//globals
-
-var numOne = '';
-var numTwo = '';
-var result = 0;
-
-
-var lastOp = '';
-var isOp = false;
-
-
-var opCount = 0;
-
-var tmp = '';
-
-
-
-
-
-
-// other operators
-for(let i = 0; i < otherBtn.length; i++) {
-    if (otherBtn[i].innerHTML == 'AC') {
-        otherBtn[i].onclick = function() {
-            historyDisplay.innerHTML = '';
-            display.innerHTML = '0';
-            numOne = '';
-            numTwo = '';
-            result = '';
-            op = false;
-            opCount = 0;
-
-            tmp = '';
-        };
+class Calculator {
+    constructor(historyDisplay, currentDisplay) {
+        this.historyDisplay = historyDisplay;
+        this.currentDisplay = currentDisplay;
+        this.clear();
     }
-}
 
-//numbers logic
-for(let i = 0; i < numberBtn.length; i++ ) {
-    numberBtn[i].onclick = function() {
-        var num = numberBtn[i].innerHTML;
+    clear() {
+        this.historyOperand = '';
+        this.currentOperand = '';
+        this.operation = undefined;
+    }
 
-        if (isOp) {
-            numTwo = display.innerHTML;
-            numOne = '';
-            numOne += num;
-            display.innerHTML = numOne;
-        }else {
-            numOne += num;
-            display.innerHTML = numOne;
+    //delete function is currently unused
+    delete() {
+        this.currentOperand = this.currentOperand.toString().slice(0, -1);
+    }
+
+    appendNumber(number) {
+        if (number === ',' && this.currentOperand.includes(',')) return;
+        this.currentOperand = this.currentOperand.toString() + number.toString();
+    }
+
+    chooseOperation(operation) {
+        if (this.currentOperand === '') return;
+        if (this.historyOperand !== '') {
+            this.compute();
         }
+        this.operation = operation;
+        this.historyOperand = this.currentOperand;
+        this.currentOperand = '';
 
-        isOp = false;
     }
-}
 
-//operators logic 
-for(let i = 0; i < operatorBtn.length; i++) {
-    operatorBtn[i].onclick = function() {
-        var operator = operatorBtn[i].innerHTML;
-
-        switch (operator) {
+    compute() {
+        let computation;
+        const prev = parseFloat(this.historyOperand);
+        const current = parseFloat(this.currentOperand);
+        if (isNaN(prev) || isNaN(current)) return;
+        switch (this.operation) {
             case '+':
-                if (lastOp == '=') {
-                    numTwo = display.innerHTML;
-                    numOne = '';
-
-                    lastOp = operator;
-                }else if (lastOp == '+'){
-                    numTwo = calculate(numOne, numTwo, lastOp);
-                    display.innerHTML = numTwo + '';
-                }else {
-                    lastOp = operator;
-                    numTwo = numOne;
-                    numOne = '';
-                }
-                isOp = true;
+                computation = prev + current;
                 break;
-
             case '-':
-
+                computation = prev - current;
                 break;
-            
-
-            case '=':
-                result = calculate(numOne, numTwo, lastOp);
-                display.innerHTML = result + '';
+            case 'x':
+                computation = prev * current;
+                break;
+            case '/':
+                computation = prev / current;
+                break;
+            default:
                 break;
         }
+        this.currentOperand = computation;
+        this.operation = undefined;
+        this.historyOperand = '';
+    }
+
+    updateDisplay() {
+        this.currentDisplay.innerText = this.currentOperand;
+        this.historyDisplay.innerText = this.historyOperand;
+
     }
 }
 
 
-function calculate(sNum1, sNum2, operator) {
-    var num1 = parseInt(sNum1);
-    var num2 = parseInt(sNum2);
-    var result = 0;
 
-    switch (operator) {
-        case '/':
-            result = num2 / num1;
-            return result;
-        case 'x':
-            result = num2 * num1;
-            return result;
-        case '-':
-            result = num2 - num1;
-            return result;
-        case '+':
-            result = num2 + num1;
-            return result;
-    }
-}
 
-function lastOperator() {
-    
-}
+const numberButtons = document.querySelectorAll('[data-number]');
+const operationButtons = document.querySelectorAll('[data-operation]');
+const equalsButton = document.querySelector('[data-equals]');
+const allClearButton = document.querySelector('[data-all-clear]');
+const plusMinusButton = document.querySelector('[data-plus-minus]');
+const procentageButton = document.querySelector('[data-procentage]')
+const historyDisplay = document.querySelector('[data-history-display]');
+const currentDisplay = document.querySelector('[data-current-display]');
+
+
+const calculator = new Calculator(historyDisplay, currentDisplay);
+
+numberButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        calculator.appendNumber(button.innerText);
+        calculator.updateDisplay();
+    })
+})
+
+operationButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        calculator.chooseOperation(button.innerText);
+        calculator.updateDisplay();
+    })
+})
+
+equalsButton.addEventListener('click', button => {
+    calculator.compute();
+    calculator.updateDisplay();
+})
+
+allClearButton.addEventListener('click', button => {
+    calculator.clear();
+    calculator.updateDisplay();
+})
+
+// this event listener is unused at the moment because there is not delete button on calculator
+// deleteButton.addEventListener('click', button => {
+//     calculator.delete();
+//     calculator.updateDisplay();
+// })
